@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -69,7 +70,11 @@ fun StocksScreen() {
                 overlineText = { Text(ticker.name) },
                 supportingText = { Text(numberFormat.format(ticker.price)) },
                 trailingContent = {
-                    Sparkline()
+                    Sparkline(
+                        color = if (ticker.ticker == "META")
+                            MaterialTheme.colorScheme.error else
+                                MaterialTheme.colorScheme.tertiary
+                    )
                 }
             )
         }
