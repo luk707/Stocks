@@ -119,7 +119,7 @@ fun StocksApp() {
                 startDestination = Screen.Stocks.route,
                 Modifier.padding(innerPadding)
             ) {
-                composable(Screen.Stocks.route) { Text("Stocks") }
+                composable(Screen.Stocks.route) { StocksScreen() }
                 composable(Screen.Forex.route) { Text("Forex") }
                 composable(Screen.Settings.route) { Text("Settings") }
             }
