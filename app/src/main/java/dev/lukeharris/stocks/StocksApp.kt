@@ -14,6 +14,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -30,6 +31,10 @@ sealed class Screen(
         "stocks",
         R.string.stocks,
         R.drawable.ic_baseline_show_chart_24
+    )
+    object StocksSearch : Screen(
+        "stocksSearch",
+        R.string.stocksSearch
     )
     object Forex : Screen(
         "forex",
@@ -91,6 +96,8 @@ fun StocksApp() {
                     Text(when (currentDestination?.route) {
                         Screen.Stocks.route ->
                             stringResource(id = Screen.Stocks.label)
+                        Screen.StocksSearch.route ->
+                            stringResource(id = Screen.StocksSearch.label)
                         Screen.Forex.route ->
                             stringResource(id = Screen.Forex.label)
                         Screen.Settings.route ->
@@ -105,6 +112,7 @@ fun StocksApp() {
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
                     when (currentDestination?.route) {
+                        Screen.StocksSearch.route,
                         Screen.Info.route,
                         Screen.StyleSettings.route ->
                             IconButton(onClick = { navController.popBackStack() }) {
@@ -116,37 +124,57 @@ fun StocksApp() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = navigateTo(Screen.Settings.route)) {
-                        Icon(
-                            painter = painterResource(id = Screen.Settings.icon ?: R.drawable.ic_baseline_show_chart_24),
-                            contentDescription = stringResource(
-                                id = Screen.Settings.label
-                            )
-                        )
+                    when (currentDestination?.route) {
+                        Screen.Settings.route,
+                        Screen.Info.route,
+                        Screen.StyleSettings.route ->
+                            null
+                        else ->
+                            IconButton(onClick = navigateTo(Screen.Settings.route)) {
+                                Icon(
+                                    painter = painterResource(id = Screen.Settings.icon ?: R.drawable.ic_baseline_show_chart_24),
+                                    contentDescription = stringResource(
+                                        id = Screen.Settings.label
+                                    )
+                                )
+                            }
                     }
                 },
             )
         },
         bottomBar = {
-            NavigationBar {
-                bottomNavigationScreens.forEach { screen ->
-                    val navigationItemLabel = stringResource(id = screen.label)
+            AnimatedVisibility(
+                visible = when (currentDestination?.route) {
+                    Screen.StocksSearch.route ->
+                        false
+                    else ->
+                        true
+                },
+                enter = slideInVertically(initialOffsetY = { 200 }),
+                exit = slideOutVertically(targetOffsetY = { 200 })
+            ) {
+                NavigationBar {
+                    bottomNavigationScreens.forEach { screen ->
+                        val navigationItemLabel = stringResource(id = screen.label)
 
-                    NavigationBarItem(
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = screen.icon ?: R.drawable.ic_baseline_show_chart_24),
-                                contentDescription = navigationItemLabel
-                            )
-                        },
-                        label = { Text(navigationItemLabel) },
-                        selected = currentDestination
-                            ?.hierarchy
-                            ?.any {
-                                it.route == screen.route
-                            } == true,
-                        onClick = navigateTo(screen.route)
-                    )
+                        NavigationBarItem(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = screen.icon ?: R.drawable.ic_baseline_show_chart_24
+                                    ),
+                                    contentDescription = navigationItemLabel
+                                )
+                            },
+                            label = { Text(navigationItemLabel) },
+                            selected = currentDestination
+                                ?.hierarchy
+                                ?.any {
+                                    it.route == screen.route
+                                } == true,
+                            onClick = navigateTo(screen.route)
+                        )
+                    }
                 }
             }
         },
@@ -156,7 +184,8 @@ fun StocksApp() {
                 startDestination = Screen.Stocks.route,
                 Modifier.padding(innerPadding)
             ) {
-                composable(Screen.Stocks.route) { StocksScreen() }
+                composable(Screen.Stocks.route) { StocksScreen(navController = navController) }
+                composable(Screen.StocksSearch.route) { StocksSearch() }
                 composable(Screen.Forex.route) { Text("Forex") }
                 composable(Screen.Settings.route) { SettingsScreen(navController = navController) }
                 composable(Screen.StyleSettings.route) { Text("Style") }

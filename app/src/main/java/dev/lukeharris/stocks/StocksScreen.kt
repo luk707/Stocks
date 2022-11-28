@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import dev.lukeharris.stocks.ui.theme.Cousine
 import java.text.NumberFormat
 import java.util.*
@@ -73,9 +74,10 @@ val STOCKS_SCREEN_TEST_DATA = listOf(
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
-@Preview(showBackground = true)
 @Composable
-fun StocksScreen() {
+fun StocksScreen(
+    navController: NavHostController
+) {
     val numberFormat = NumberFormat.getCurrencyInstance(Locale.US)
     numberFormat.maximumFractionDigits = 2
 
@@ -92,7 +94,7 @@ fun StocksScreen() {
                     .padding(PaddingValues(horizontal = 8.dp, vertical = 10.dp))
                     .clip(RoundedCornerShape(percent = 100))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .clickable { /* TODO */ }
+                    .clickable { navController.navigate(Screen.StocksSearch.route) }
                     .padding(PaddingValues(horizontal = 12.dp, vertical = 12.dp))
 
             ) {
