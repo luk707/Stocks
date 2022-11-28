@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.lukeharris.stocks.ui.theme.Cousine
@@ -53,6 +54,21 @@ val STOCKS_SCREEN_TEST_DATA = listOf(
         ticker = "GME",
         name = "GameStop Corp. Class A",
         price = 26.75
+    ),
+    Ticker(
+        ticker = "MSFT",
+        name = "Microsoft Corp",
+        price = 26.75
+    ),
+    Ticker(
+        ticker = "AMZN",
+        name = "Amazon.Com Inc",
+        price = 26.75
+    ),
+    Ticker(
+        ticker = "SONY",
+        name = "Sony Group Corporation American Depositary Shares (Each Representing One Share of Dollar Validated Common Stock)",
+        price = 26.75
     )
 )
 
@@ -64,9 +80,6 @@ fun StocksScreen() {
     numberFormat.maximumFractionDigits = 2
 
     val list: MutableList<Ticker> = ArrayList()
-    list.addAll(STOCKS_SCREEN_TEST_DATA)
-    list.addAll(STOCKS_SCREEN_TEST_DATA)
-    list.addAll(STOCKS_SCREEN_TEST_DATA)
     list.addAll(STOCKS_SCREEN_TEST_DATA)
 
     LazyColumn(
@@ -99,7 +112,7 @@ fun StocksScreen() {
         }
         items(list) { ticker ->
             ListItem(
-                overlineText = { Text(ticker.name) },
+                overlineText = { Text(ticker.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 headlineText = { Text(ticker.ticker, fontFamily = Cousine, fontWeight = FontWeight.Bold) },
                 supportingText = { Text(numberFormat.format(ticker.price), fontFamily = Cousine) },
                 trailingContent = {
