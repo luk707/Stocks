@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -107,7 +108,8 @@ fun StocksApp() {
                                 navBackStackEntry?.arguments?.getString("ticker")?.let { ticker ->
                                     Text(
                                         ticker,
-                                        fontFamily = Cousine
+                                        fontFamily = Cousine,
+                                        fontWeight = FontWeight.Bold
                                     )
                                 }
                             equals(Screen.StocksSearch.route) ->
