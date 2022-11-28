@@ -2,7 +2,10 @@ package dev.lukeharris.stocks
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.*
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,23 +23,31 @@ import androidx.navigation.compose.rememberNavController
 
 sealed class Screen(
     val route: String,
-    @DrawableRes val icon: Int,
-    @StringRes val label: Int
+    @StringRes val label: Int,
+    @DrawableRes val icon: Int? = null
 ) {
     object Stocks : Screen(
         "stocks",
-        R.drawable.ic_baseline_show_chart_24,
-        R.string.stocks
+        R.string.stocks,
+        R.drawable.ic_baseline_show_chart_24
     )
     object Forex : Screen(
         "forex",
-        R.drawable.ic_baseline_currency_exchange_24,
-        R.string.forex
+        R.string.forex,
+        R.drawable.ic_baseline_currency_exchange_24
     )
     object Settings : Screen(
         "settings",
-        R.drawable.ic_baseline_settings_24,
-        R.string.settings
+        R.string.settings,
+        R.drawable.ic_baseline_settings_24
+    )
+    object StyleSettings : Screen(
+        "settings/style",
+        R.string.styleSettings
+    )
+    object Info : Screen(
+        "settings/info",
+        R.string.info
     )
 }
 
@@ -45,11 +56,14 @@ val bottomNavigationScreens = listOf(
     Screen.Forex
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun StocksApp() {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val navController = rememberNavController()
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
 
     fun navigateTo(route: String): () -> Unit {
         return {
@@ -73,12 +87,38 @@ fun StocksApp() {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Stocks") },
+                title = {
+                    Text(when (currentDestination?.route) {
+                        Screen.Stocks.route ->
+                            stringResource(id = Screen.Stocks.label)
+                        Screen.Forex.route ->
+                            stringResource(id = Screen.Forex.label)
+                        Screen.Settings.route ->
+                            stringResource(id = Screen.Settings.label)
+                        Screen.StyleSettings.route ->
+                            stringResource(id = Screen.StyleSettings.label)
+                        Screen.Info.route ->
+                            stringResource(id = Screen.Info.label)
+                        else -> "Stocks"
+                    })
+                },
                 scrollBehavior = scrollBehavior,
+                navigationIcon = {
+                    when (currentDestination?.route) {
+                        Screen.Info.route,
+                        Screen.StyleSettings.route ->
+                            IconButton(onClick = { navController.popBackStack() }) {
+                                Icon(
+                                    Icons.Filled.ArrowBack,
+                                    contentDescription = "Back"
+                                )
+                            }
+                    }
+                },
                 actions = {
                     IconButton(onClick = navigateTo(Screen.Settings.route)) {
                         Icon(
-                            painter = painterResource(id = Screen.Settings.icon),
+                            painter = painterResource(id = Screen.Settings.icon ?: R.drawable.ic_baseline_show_chart_24),
                             contentDescription = stringResource(
                                 id = Screen.Settings.label
                             )
@@ -89,16 +129,13 @@ fun StocksApp() {
         },
         bottomBar = {
             NavigationBar {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-
                 bottomNavigationScreens.forEach { screen ->
                     val navigationItemLabel = stringResource(id = screen.label)
 
                     NavigationBarItem(
                         icon = {
                             Icon(
-                                painter = painterResource(id = screen.icon),
+                                painter = painterResource(id = screen.icon ?: R.drawable.ic_baseline_show_chart_24),
                                 contentDescription = navigationItemLabel
                             )
                         },
@@ -121,7 +158,9 @@ fun StocksApp() {
             ) {
                 composable(Screen.Stocks.route) { StocksScreen() }
                 composable(Screen.Forex.route) { Text("Forex") }
-                composable(Screen.Settings.route) { Text("Settings") }
+                composable(Screen.Settings.route) { SettingsScreen(navController = navController) }
+                composable(Screen.StyleSettings.route) { Text("Style") }
+                composable(Screen.Info.route) { Text("Info") }
             }
         }
     )

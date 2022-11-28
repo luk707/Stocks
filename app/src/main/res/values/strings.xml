@@ -3,4 +3,6 @@
     <string name="stocks">Stocks</string>
     <string name="settings">Settings</string>
     <string name="forex">Forex</string>
+    <string name="styleSettings">Style</string>
+    <string name="info">Info</string>
 </resources>
