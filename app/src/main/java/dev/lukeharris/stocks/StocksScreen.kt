@@ -108,12 +108,17 @@ fun StocksScreen(
                         contentDescription = "Search",
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text("Search Stocks", modifier = Modifier.padding(top = 3.25.dp),  color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        "Search Stocks",
+                        modifier = Modifier.padding(top = 3.25.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
         }
         items(list) { ticker ->
             ListItem(
+                modifier = Modifier.clickable { navController.navigate("stocks/${ticker.ticker}") },
                 overlineText = { Text(ticker.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 headlineText = { Text(ticker.ticker, fontFamily = Cousine, fontWeight = FontWeight.Bold) },
                 supportingText = { Text(numberFormat.format(ticker.price), fontFamily = Cousine) },

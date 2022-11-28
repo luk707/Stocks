@@ -6,4 +6,5 @@
     <string name="styleSettings">Style</string>
     <string name="info">Info</string>
     <string name="stocksSearch">Search</string>
+    <string name="stocksDetail">StocksDetail</string>
 </resources>

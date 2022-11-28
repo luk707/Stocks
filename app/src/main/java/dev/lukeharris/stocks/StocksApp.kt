@@ -14,13 +14,15 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import dev.lukeharris.stocks.ui.theme.Cousine
 
 sealed class Screen(
     val route: String,
@@ -31,6 +33,10 @@ sealed class Screen(
         "stocks",
         R.string.stocks,
         R.drawable.ic_baseline_show_chart_24
+    )
+    object StocksDetail : Screen(
+        "stocks/{ticker}",
+        R.string.stocksDetail
     )
     object StocksSearch : Screen(
         "stocksSearch",
@@ -93,34 +99,46 @@ fun StocksApp() {
         topBar = {
             LargeTopAppBar(
                 title = {
-                    Text(when (currentDestination?.route) {
-                        Screen.Stocks.route ->
-                            stringResource(id = Screen.Stocks.label)
-                        Screen.StocksSearch.route ->
-                            stringResource(id = Screen.StocksSearch.label)
-                        Screen.Forex.route ->
-                            stringResource(id = Screen.Forex.label)
-                        Screen.Settings.route ->
-                            stringResource(id = Screen.Settings.label)
-                        Screen.StyleSettings.route ->
-                            stringResource(id = Screen.StyleSettings.label)
-                        Screen.Info.route ->
-                            stringResource(id = Screen.Info.label)
-                        else -> "Stocks"
-                    })
+                    with (currentDestination?.route) {
+                        when {
+                            equals(Screen.Stocks.route) ->
+                                Text(stringResource(id = Screen.Stocks.label))
+                            this?.startsWith("stocks/") ?: false ->
+                                navBackStackEntry?.arguments?.getString("ticker")?.let { ticker ->
+                                    Text(
+                                        ticker,
+                                        fontFamily = Cousine
+                                    )
+                                }
+                            equals(Screen.StocksSearch.route) ->
+                                Text(stringResource(id = Screen.StocksSearch.label))
+                            equals(Screen.Forex.route) ->
+                                Text(stringResource(id = Screen.Forex.label))
+                            equals(Screen.Settings.route) ->
+                                Text(stringResource(id = Screen.Settings.label))
+                            equals(Screen.StyleSettings.route) ->
+                                Text(stringResource(id = Screen.StyleSettings.label))
+                            equals(Screen.Info.route) ->
+                                Text(stringResource(id = Screen.Info.label))
+                            else -> Text("Stocks")
+                        }
+                    }
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    when (currentDestination?.route) {
-                        Screen.StocksSearch.route,
-                        Screen.Info.route,
-                        Screen.StyleSettings.route ->
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    Icons.Filled.ArrowBack,
-                                    contentDescription = "Back"
-                                )
-                            }
+                    with (currentDestination?.route) {
+                        when {
+                            equals(Screen.StocksSearch.route) ||
+                            equals(Screen.Info.route) ||
+                            equals(Screen.StyleSettings.route) ||
+                            this?.startsWith("stocks/") ?: false ->
+                                IconButton(onClick = { navController.popBackStack() }) {
+                                    Icon(
+                                        Icons.Filled.ArrowBack,
+                                        contentDescription = "Back"
+                                    )
+                                }
+                        }
                     }
                 },
                 actions = {
@@ -170,7 +188,7 @@ fun StocksApp() {
                             selected = currentDestination
                                 ?.hierarchy
                                 ?.any {
-                                    it.route == screen.route
+                                    it.route?.startsWith(screen.route) ?: false
                                 } == true,
                             onClick = navigateTo(screen.route)
                         )
@@ -185,6 +203,13 @@ fun StocksApp() {
                 Modifier.padding(innerPadding)
             ) {
                 composable(Screen.Stocks.route) { StocksScreen(navController = navController) }
+                composable(Screen.StocksDetail.route, arguments = listOf(
+                    navArgument("ticker") {
+                        type = NavType.StringType
+                    }
+                )) { backStackEntry ->
+                    StocksDetail(ticker = backStackEntry.arguments?.getString("ticker") ?: "")
+                }
                 composable(Screen.StocksSearch.route) { StocksSearch() }
                 composable(Screen.Forex.route) { Text("Forex") }
                 composable(Screen.Settings.route) { SettingsScreen(navController = navController) }
