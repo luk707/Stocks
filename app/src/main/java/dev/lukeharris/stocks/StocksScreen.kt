@@ -1,16 +1,23 @@
 package dev.lukeharris.stocks
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import dev.lukeharris.stocks.ui.theme.Cousine
 import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -49,7 +56,7 @@ val STOCKS_SCREEN_TEST_DATA = listOf(
     )
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
 fun StocksScreen() {
@@ -65,11 +72,36 @@ fun StocksScreen() {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
     ) {
+        stickyHeader {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(PaddingValues(horizontal = 8.dp, vertical = 10.dp))
+                    .clip(RoundedCornerShape(percent = 100))
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .clickable { /* TODO */ }
+                    .padding(PaddingValues(horizontal = 12.dp, vertical = 12.dp))
+
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(start = 3.5.dp),
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search",
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("Search Stocks", modifier = Modifier.padding(top = 3.25.dp),  color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            }
+        }
         items(list) { ticker ->
             ListItem(
-                headlineText = { Text(ticker.ticker, fontWeight = FontWeight.Black) },
                 overlineText = { Text(ticker.name) },
-                supportingText = { Text(numberFormat.format(ticker.price)) },
+                headlineText = { Text(ticker.ticker, fontFamily = Cousine, fontWeight = FontWeight.Bold) },
+                supportingText = { Text(numberFormat.format(ticker.price), fontFamily = Cousine) },
                 trailingContent = {
                     Sparkline(
                         color = if (ticker.ticker == "META")
