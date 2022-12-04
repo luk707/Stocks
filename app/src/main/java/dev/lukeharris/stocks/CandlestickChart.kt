@@ -247,7 +247,6 @@ fun CandlestickChart(
     var scale by remember { mutableStateOf(1f) }
     val offset = remember { Animatable(0f) }
 
-
     Spacer(
         modifier = modifier
             .pointerInput(Unit) {
@@ -305,13 +304,12 @@ fun CandlestickChart(
                 val candleWidth = this.size.width / data.size * scale
 
                 onDrawBehind {
-                    // TODO: Only calculate bounds from visible candles.
                     val max = data
-//                        .filterIndexed { index, _ -> index * candleWidth >= offset.value && (index + 1) * candleWidth <= offset.value + size.width / scale }
+                        .filterIndexed { index, _ -> ((index + 1) * candleWidth) - (offset.value * scale) >= 0 && (index * candleWidth) - (offset.value * scale) < size.width}
                         .map { max(max(it.h, it.o), it.c) }
                         .reduce { acc: Double, p: Double -> max(acc, p) }
                     val min = data
-//                        .filterIndexed { index, _ -> index * candleWidth >= offset.value && (index + 1) * candleWidth <= offset.value + size.width / scale }
+                        .filterIndexed { index, _ -> ((index + 1) * candleWidth) - (offset.value * scale) >= 0 && (index * candleWidth) - (offset.value * scale) < size.width}
                         .map { min(min(it.l, it.o), it.c) }
                         .reduce { acc: Double, p: Double -> min(acc, p) }
 
