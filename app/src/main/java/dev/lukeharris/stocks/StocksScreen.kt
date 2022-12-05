@@ -96,7 +96,6 @@ fun StocksScreen(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { navController.navigate(Screen.StocksSearch.route) }
                     .padding(PaddingValues(horizontal = 12.dp, vertical = 12.dp))
-
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
