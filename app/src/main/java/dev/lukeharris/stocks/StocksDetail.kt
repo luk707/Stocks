@@ -1,6 +1,7 @@
 package dev.lukeharris.stocks
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,15 +60,20 @@ fun StocksDetail(ticker: String) {
                 )
 
         ) {
-            CandlestickChart(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-                    .height(250.dp),
-                bodyColorPriceIncrease = MaterialTheme.colorScheme.tertiary,
-                bodyColorPriceDecrease = MaterialTheme.colorScheme.error,
-                wickColor = MaterialTheme.colorScheme.onSurface
-            )
+            Crossfade(targetState = selectedRange) { range ->
+                CandlestickChart(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                        .height(250.dp),
+                    bodyColorPriceIncrease = MaterialTheme.colorScheme.tertiary,
+                    bodyColorPriceDecrease = MaterialTheme.colorScheme.error,
+                    wickColor = MaterialTheme.colorScheme.onSurface,
+                    data = when (range) {
+                        else -> CANDLESTICK_TEST_DATA
+                    }
+                )
+            }
         }
     }
 }
