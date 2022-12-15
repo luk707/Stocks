@@ -25,16 +25,16 @@ data class SettingsScreenMenuItem(
 )
 
 val settingsScreenMenuItems = listOf(
-    SettingsScreenMenuItem(
-        Screen.StyleSettings.route,
-        "Style",
-        "Colours, themes and other customisation options.",
-        R.drawable.ic_baseline_palette_24
-    ),
+//    SettingsScreenMenuItem(
+//        Screen.StyleSettings.route,
+//        "Style",
+//        "Colours, themes and other customisation options.",
+//        R.drawable.ic_baseline_palette_24
+//    ),
     SettingsScreenMenuItem(
         Screen.Info.route,
         "Info",
-        "Version, third party licenses and more.",
+        "Version information.",
         R.drawable.ic_baseline_info_24
     ),
 )

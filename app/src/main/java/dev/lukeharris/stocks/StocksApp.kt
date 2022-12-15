@@ -65,7 +65,7 @@ sealed class Screen(
 
 val bottomNavigationScreens = listOf(
     Screen.Stocks,
-    Screen.Forex
+//    Screen.Forex
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -216,7 +216,7 @@ fun StocksApp() {
                 composable(Screen.Forex.route) { Text("Forex") }
                 composable(Screen.Settings.route) { SettingsScreen(navController = navController) }
                 composable(Screen.StyleSettings.route) { Text("Style") }
-                composable(Screen.Info.route) { Text("Info") }
+                composable(Screen.Info.route) { SettingsInfoScreen() }
             }
         }
     )
